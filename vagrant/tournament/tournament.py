@@ -108,11 +108,10 @@ def swissPairings():
     """
     db = connect()
     cursor = db.cursor()
-    cursor.execute("SELECT a.id, a.name, b.id, b.name FROM (SELECT players.id, name, wins FROM standings JOIN players ON standings.id=players.id) as a JOIN (SELECT players.id, name, wins FROM standings JOIN players ON standings.id=players.id) as b ON a.wins = b.wins AND a.id < b.id")
+    cursor.execute("SELECT player1, odds.name, player2, evens.name FROM (SELECT odds.id as player1, name, ROW_NUMBER() OVER() FROM (SELECT id, ROW_NUMBER() OVER() FROM standings) as odds JOIN players ON odds.id=players.id WHERE row_number % 2 != 0) as odds JOIN (SELECT evens.id as player2, name, ROW_NUMBER() OVER() FROM (SELECT id, ROW_NUMBER() OVER() FROM standings) as evens JOIN players ON evens.id=players.id WHERE row_number % 2 = 0) as evens ON odds.row_number = evens.row_number")
     '''standings = cursor.fetchall();'''
     pairs = [(int(row[0]), str(row[1]), int(row[2]), str(row[3])) for row in cursor.fetchall()]
     db.close() 
     print pairs
     return pairs
     
-
