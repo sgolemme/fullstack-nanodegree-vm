@@ -124,7 +124,7 @@ def testPairings():
             "After one match, players with one win should be paired.")
     print "8. After one match, players with one win are paired."
 
-def testRepeatGames():
+def testSixPlayers():
     deleteMatches()
     deletePlayers()
     registerPlayer("Twilight Sparkle")
@@ -138,14 +138,22 @@ def testRepeatGames():
     reportMatch(id1, id2)
     reportMatch(id3, id4)
     reportMatch(id5, id6)
+    reportMatch(id1, id3)
+    reportMatch(id5, id2)
+    reportMatch(id4, id6)
     pairings = swissPairings()
     if len(pairings) != 3:
         raise ValueError(
             "For six players, swissPairings should return three pairs.")
+    correct_pairs = set([frozenset([id1, id5]), frozenset([id3, id4]), frozenset([id2, id6])])
     [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4), (pid5, pname5, pid6, pname6)] = pairings
-    previous = 0
+    actual_pairs = set([frozenset([pid1, pid2]), frozenset([pid3, pid4]), frozenset([pid5, pid6])])
+    if correct_pairs != actual_pairs:
+        raise ValueError(
+            "After two match, players with two wins should be paired and players with one win should be paired.")
+    
     #if ((pid1 == id1)
-    print "9. After one match, no players are matched against people they have already played against."
+    print "9. After two matches, only appropriate pairing is used."
 
 
 if __name__ == '__main__':
@@ -157,7 +165,7 @@ if __name__ == '__main__':
     testStandingsBeforeMatches()
     testReportMatches()
     testPairings()
-    testRepeatGames()
+    testSixPlayers()
     print "Success!  All tests pass!"
 
 

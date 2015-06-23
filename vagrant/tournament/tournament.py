@@ -108,10 +108,8 @@ def swissPairings():
     """
     db = connect()
     cursor = db.cursor()
-    cursor.execute("SELECT player1, odds.name, player2, evens.name FROM (SELECT odds.id as player1, name, ROW_NUMBER() OVER() FROM (SELECT id, ROW_NUMBER() OVER() FROM standings) as odds JOIN players ON odds.id=players.id WHERE row_number % 2 != 0) as odds JOIN (SELECT evens.id as player2, name, ROW_NUMBER() OVER() FROM (SELECT id, ROW_NUMBER() OVER() FROM standings) as evens JOIN players ON evens.id=players.id WHERE row_number % 2 = 0) as evens ON odds.row_number = evens.row_number")
-    '''standings = cursor.fetchall();'''
+    cursor.execute("SELECT player1, odds.name, player2, evens.name FROM (SELECT odds.id as player1, name, ROW_NUMBER() OVER() FROM (SELECT id, ROW_NUMBER() OVER() FROM standings ORDER BY wins desc, matches) as odds JOIN players ON odds.id=players.id WHERE row_number % 2 != 0 order by row_number) as odds JOIN (SELECT evens.id as player2, name, ROW_NUMBER() OVER() FROM (SELECT id, ROW_NUMBER() OVER() FROM standings ORDER BY wins desc, matches) as evens JOIN players ON evens.id=players.id WHERE row_number % 2 = 0 ORDER BY row_number) as evens ON odds.row_number = evens.row_number")
     pairs = [(int(row[0]), str(row[1]), int(row[2]), str(row[3])) for row in cursor.fetchall()]
     db.close() 
-    print pairs
     return pairs
     
