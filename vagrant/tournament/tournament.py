@@ -13,14 +13,30 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM matches")
+    db.commit()
+    db.close()
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM players")
+    db.commit()
+    db.close()
 
 
 def countPlayers():
     """Returns the number of players currently registered."""
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("SELECT COUNT(id) FROM players")
+    num = cursor.fetchone()[0]
+    db.close() 
+    return num
 
 
 def registerPlayer(name):
@@ -32,6 +48,11 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO players VALUES(%s)", (name,))
+    db.commit()
+    db.close() 
 
 
 def playerStandings():
@@ -47,6 +68,13 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("SELECT players.id, name, wins, matches FROM standings JOIN players ON standings.id=players.id ORDER BY wins DESC, matches")
+    '''standings = cursor.fetchall();'''
+    standings = [(int(row[0]), str(row[1]), int(row[2]), int(row[3])) for row in cursor.fetchall()]
+    db.close() 
+    return standings
 
 
 def reportMatch(winner, loser):
@@ -56,6 +84,11 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO matches (player1, player2, winner) VALUES(%s, %s, %s)", (winner,loser, winner,))
+    db.commit()
+    db.close() 
  
  
 def swissPairings():
@@ -73,5 +106,13 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("SELECT a.id, a.name, b.id, b.name FROM (SELECT players.id, name, wins FROM standings JOIN players ON standings.id=players.id) as a JOIN (SELECT players.id, name, wins FROM standings JOIN players ON standings.id=players.id) as b ON a.wins = b.wins AND a.id < b.id")
+    '''standings = cursor.fetchall();'''
+    pairs = [(int(row[0]), str(row[1]), int(row[2]), str(row[3])) for row in cursor.fetchall()]
+    db.close() 
+    print pairs
+    return pairs
+    
 
