@@ -6,6 +6,10 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
+DROP DATABASE tournament;
+CREATE DATABASE tournament;
+\c tournament;
+
 CREATE TABLE players (
 	name TEXT, 
 	id SERIAL PRIMARY KEY
@@ -33,4 +37,4 @@ CREATE VIEW standings AS
 		GROUP BY id
 	) as matches 
 	on wins.id=matches.id 
-	ORDER BY wins DESC, matches
+	ORDER BY wins DESC, matches;
