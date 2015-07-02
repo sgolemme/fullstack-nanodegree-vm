@@ -38,3 +38,34 @@ CREATE VIEW standings AS
 	) as matches 
 	on wins.id=matches.id 
 	ORDER BY wins DESC, matches;
+
+CREATE VIEW match_scoring AS
+	SELECT id, 3*wins as match_points
+	FROM standings;
+
+--SELECT player1, odds.name, player2, evens.name 
+-- FROM (
+-- 	SELECT odds.id as player1, name, ROW_NUMBER() OVER() 
+-- 	FROM (
+-- 		SELECT id, ROW_NUMBER() OVER() 
+-- 		FROM standings 
+-- 		ORDER BY wins desc, matches
+-- 	) as odds 
+-- 	JOIN players ON odds.id=players.id 
+-- 	WHERE row_number % 2 != 0 
+-- 	order by row_number
+-- ) as odds 
+-- JOIN (
+-- 	SELECT evens.id as player2, name, ROW_NUMBER() OVER() 
+-- 	FROM (
+-- 		SELECT id, ROW_NUMBER() OVER() 
+-- 		FROM standings 
+-- 		ORDER BY wins desc, matches
+-- 	) as evens JOIN players ON evens.id=players.id 
+-- 	WHERE row_number % 2 = 0 
+-- 	ORDER BY row_number
+-- ) as evens 
+-- ON odds.row_number = evens.row_number;
+
+
+
